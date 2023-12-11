@@ -5,15 +5,8 @@ const accountSid = functions.config().twilio.sid;
 const authToken = functions.config().twilio.token;
 const twilioClient = twilio(accountSid, authToken);
 
-exports.sendTwilioSMS = functions.https.onCall((data, context) => {
+exports.sendTwilioSMS = functions.https.onCall((data) => {
   const { to, body } = data;
-
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "The function must be called while authenticated."
-    );
-  }
 
   return twilioClient.messages
     .create({

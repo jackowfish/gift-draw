@@ -18,7 +18,7 @@ exports.sendTwilioSMS = functions.https.onCall((data, context) => {
   return twilioClient.messages
     .create({
       body: body,
-      from: "+14843095079", // Replace with your Twilio number
+      from: "+14843095079",
       to: to,
     })
     .then((message) => ({ success: true, sid: message.sid }))

@@ -36,7 +36,8 @@ const GiftDraw = () => {
                   Gift Draw is a simple web app that allows you to create a "hat"\
                   of your friends or families names and emails.\
                   Giftdraw draws names from the hat and sends them out to everyone\
-                  to let them know who gets who!\
+                  to let them know who is getting a present for who!\
+                  Thiink of it as a secret santa hat, but for any occasion!\
                   '}
                 title="What is this?"
                 trigger="click"

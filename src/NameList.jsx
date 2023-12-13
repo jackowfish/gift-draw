@@ -51,6 +51,7 @@ const NameList = ({ listOpen, setListOpen }) => {
     const handleCreateHat = async () => {
         const shuffledNames = shuffleArray(rows.map((row, index) => ({ ...row, index })));
         const assigned = assignRecipients(shuffledNames);
+        console.log(assigned);
 
         for (let person of assigned) {
             const message = `Hello ${getFirstName(person.name)}, you have been assigned to gift ${assigned.find(p => p.index === person.recipient).name}!`;
@@ -67,9 +68,19 @@ const NameList = ({ listOpen, setListOpen }) => {
     };
 
     const assignRecipients = (shuffled) => {
-        for (let i = 0; i < shuffled.length; i++) {
-            shuffled[i].recipient = (i + 1) % shuffled.length;
+        let n = shuffled.length;
+        let recipients = shuffleArray([...shuffled]);
+
+        // Check for self-assignment and reshuffle if necessary
+        while (recipients.some((r, i) => r.index === shuffled[i].index)) {
+            recipients = shuffleArray([...shuffled]);
         }
+
+        // Assign recipients
+        for (let i = 0; i < n; i++) {
+            shuffled[i].recipient = recipients[i].index;
+        }
+
         return shuffled;
     };
 

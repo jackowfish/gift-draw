@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
-import { Button, Flex } from "antd";
+import { Button, Flex, Popover } from "antd";
 import NameList from "./NameList";
+import logo from "./logo.svg";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
+
 
 const GiftDraw = () => {
+  const [open, setOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
+
+  const handleOpenChange = (newOpen) => {
+    setOpen(newOpen);
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <Flex vertical gap={12} align="center">
@@ -18,9 +26,29 @@ const GiftDraw = () => {
                 </text>
               </svg>
             </div>
-            <Button type="primary" size="large" onClick={setListOpen} style={{ backgroundColor: 'Indianred', width: '50%' }}>
-              Create a hat
-            </Button>
+            <Flex gap={0} style={{ marginLeft: '8px' }}>
+              <Button type="primary" size="large" onClick={setListOpen} style={{ backgroundColor: 'Indianred', width: '100%' }}>
+                Create a hat
+              </Button>
+              <Popover
+                placement="top"
+                content={'\
+                  Gift Draw is a simple web app that allows you to create a "hat"\
+                  of your friends or families names and emails.\
+                  Giftdraw draws names from the hat and sends them out to everyone\
+                  to let them know who gets who!\
+                  '}
+                title="What is this?"
+                trigger="click"
+                open={open}
+                onOpenChange={handleOpenChange}
+              >
+                <Button
+                  type="secondary"
+                  icon={<InfoCircleOutlined />}
+                />
+              </Popover>
+            </Flex>
           </>
         )}
       </Flex>

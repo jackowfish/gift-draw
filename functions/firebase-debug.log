@@ -1,0 +1,71 @@
+[debug] [2023-12-13T04:23:02.291Z] ----------------------------------------------------------------------
+[debug] [2023-12-13T04:23:02.292Z] Command:       /Users/jadecker/.nvm/versions/node/v20.9.0/bin/node /Users/jadecker/.nvm/versions/node/v16.19.1/bin/firebase functions:shell
+[debug] [2023-12-13T04:23:02.293Z] CLI Version:   13.0.1
+[debug] [2023-12-13T04:23:02.293Z] Platform:      darwin
+[debug] [2023-12-13T04:23:02.293Z] Node Version:  v20.9.0
+[debug] [2023-12-13T04:23:02.293Z] Time:          Tue Dec 12 2023 20:23:02 GMT-0800 (Pacific Standard Time)
+[debug] [2023-12-13T04:23:02.293Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-12-13T04:23:02.330Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-12-13T04:23:02.330Z] > authorizing via signed-in user (jackdeckere@gmail.com)
+[debug] [2023-12-13T04:23:02.330Z] [iam] checking project giftdraw-604c4 for permissions ["firebase.projects.get"]
+[debug] [2023-12-13T04:23:02.331Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/giftdraw-604c4:testIamPermissions [none]
+[debug] [2023-12-13T04:23:02.331Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/giftdraw-604c4:testIamPermissions x-goog-quota-user=projects/giftdraw-604c4
+[debug] [2023-12-13T04:23:02.331Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/giftdraw-604c4:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-12-13T04:23:02.483Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/giftdraw-604c4:testIamPermissions 200
+[debug] [2023-12-13T04:23:02.483Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/giftdraw-604c4:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-12-13T04:23:02.574Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-12-13T04:23:02.575Z] defaultcredentials: writing to file /Users/jadecker/.config/firebase/jackdeckere_gmail_com_application_default_credentials.json
+[debug] [2023-12-13T04:23:02.576Z] DEBUG: Setting GAC to /Users/jadecker/.config/firebase/jackdeckere_gmail_com_application_default_credentials.json
+[debug] [2023-12-13T04:23:02.576Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/giftdraw-604c4/adminSdkConfig [none]
+[debug] [2023-12-13T04:23:02.968Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/giftdraw-604c4/adminSdkConfig 200
+[debug] [2023-12-13T04:23:02.968Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/giftdraw-604c4/adminSdkConfig {"projectId":"giftdraw-604c4","storageBucket":"giftdraw-604c4.appspot.com"}
+[debug] [2023-12-13T04:23:02.980Z] [functions] Watching "/Users/jadecker/Repos/gift-draw/functions" for Cloud Functions...
+[debug] [2023-12-13T04:23:02.983Z] Validating nodejs source
+[debug] [2023-12-13T04:23:03.354Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-12-13T04:23:03.355Z] Building nodejs source
+[debug] [2023-12-13T04:23:03.355Z] Failed to find version of module node: reached end of search path /Users/jadecker/Repos/gift-draw/functions/node_modules
+[info] ✔  functions: Using node@20 from host. 
+[debug] [2023-12-13T04:23:03.356Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-12-13T04:23:03.360Z] Found firebase-functions binary at '/Users/jadecker/Repos/gift-draw/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8379
+
+[error] TypeError: Cannot destructure property 'account' of 'functions.config(...).gmail' as it is undefined.
+    at Object.<anonymous> (/Users/jadecker/Repos/gift-draw/functions/index.js:4:8)
+    at Module._compile (node:internal/modules/cjs/loader:1241:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1295:10)
+    at Module.load (node:internal/modules/cjs/loader:1091:32)
+    at Module._load (node:internal/modules/cjs/loader:938:12)
+    at Module.require (node:internal/modules/cjs/loader:1115:19)
+    at require (node:internal/modules/helpers:130:18)
+    at loadModule (/Users/jadecker/Repos/gift-draw/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/jadecker/Repos/gift-draw/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/jadecker/Repos/gift-draw/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-12-13T04:23:03.596Z] Got response code 400; body Failed to generate manifest from function source: TypeError: Cannot destructure property 'account' of 'functions.config(...).gmail' as it is undefined.

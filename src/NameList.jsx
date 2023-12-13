@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col, Flex } from 'antd';
+import { Input, Button, Row, Col, Flex, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, SendOutlined } from '@ant-design/icons';
-import { parsePhoneNumber } from 'libphonenumber-js';
 import { initializeApp } from 'firebase/app';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import firebaseConfig from './firebaseConfig';
@@ -9,14 +8,14 @@ import 'firebase/functions';
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
+const rowsInit = [{ name: '', email: '', domain: '@gmail.com', isValid: true }];
 
-const NameList = () => {
-
-    const [rows, setRows] = useState([{ name: '', phone: '', isValid: true }]);
+const NameList = ({ listOpen, setListOpen }) => {
+    const [rows, setRows] = useState([...rowsInit]);
     const [isSending, setIsSending] = useState(false);
 
     const handleAddRow = () => {
-        const newRow = { name: '', phone: '', isValid: true };
+        const newRow = { name: '', email: '', domain: '@gmail.com', isValid: true };
         setRows([...rows, newRow]);
     };
 
@@ -25,27 +24,25 @@ const NameList = () => {
         setRows(newRows);
     };
 
-    const verifyPhone = (phone) => {
-        try {
-            let number = ''
-            if (phone[0] !== '+') {
-                number = parsePhoneNumber(`+1${phone}`);
-            } else {
-                number = parsePhoneNumber(phone);
-            }
-            return (number.isValid());
-        } catch (error) {
-            return (false);
-        }
+    const isEmailValid = (email) => {
+        console.log(email);
+        const regexPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        return regexPattern.test(email);
+    };
+
+    const handleDomainChange = (value, index) => {
+        const newRows = [...rows];
+        newRows[index].domain = value;
+        setRows(newRows);
     };
 
     const handleInputChange = (e, index, fieldName) => {
         const newRows = [...rows];
         newRows[index][fieldName] = e.target.value;
 
-        // Validate phone number if the field is 'phone'
-        if (fieldName === 'phone') {
-            newRows[index].isValid = verifyPhone(e.target.value);
+        // Validate email number if the field is 'email'
+        if (fieldName === 'email') {
+            newRows[index].isValid = isEmailValid(e.target.value + newRows[index].domain);
         }
 
         setRows(newRows);
@@ -57,7 +54,7 @@ const NameList = () => {
 
         for (let person of assigned) {
             const message = `Hello ${getFirstName(person.name)}, you have been assigned to gift ${assigned.find(p => p.index === person.recipient).name}!`;
-            await sendSMS(person.phone, message);
+            await sendEmail(person.email + person.domain, message);
         }
     };
 
@@ -80,74 +77,103 @@ const NameList = () => {
         return fullName.split(' ')[0];
     };
 
-    const sendSMS = async (phoneNumber, message) => {
-        const sendTwilioSMS = httpsCallable(functions, 'sendTwilioSMS');
+    const sendEmail = async (email, message) => {
+        const sendEmail = httpsCallable(functions, 'sendGmail');
         try {
-            if (phoneNumber[0] !== '+') {
-                phoneNumber = `+1${phoneNumber}`;
+            if (email[0] !== '+') {
+                email = `+1${email}`;
             }
             setIsSending(true);
-            const result = await sendTwilioSMS({ to: phoneNumber, body: message });
+            const result = await sendEmail({ to: email, subject: 'Your pick out of the hat!', text: message });
             setIsSending(false)
             console.log(result);
         } catch (error) {
             setIsSending(false)
-            console.error('Error sending SMS:', error);
+            console.error('Error sending email:', error);
         }
     };
 
-    return (
+    return listOpen && (
         <div>
-            {rows.map((row, index) => (
-                <Row key={index} style={{ marginBottom: '10px', border: row.isValid ? 'none' : '1px solid red' }}>
-                    <Col span={2}>
-                        {index !== 0 && (
-                            <Button
-                                type="danger"
-                                shape="circle"
-                                icon={<MinusCircleOutlined />}
-                                onClick={() => handleRemoveRow(index)}
+            {rows.map((row, index) => {
+                const selectAfter = (
+                    <Select
+                        defaultValue="@gmail.com"
+                        onChange={(value) => handleDomainChange(value, index)}
+                    >
+                        <Select.Option value="@gmail.com">@gmail.com</Select.Option>
+                        <Select.Option value="@yahoo.com">@yahoo.com</Select.Option>
+                        <Select.Option value="@hotmail.com">@hotmail.com</Select.Option>
+                        <Select.Option value="@outlook.com">@outlook.com</Select.Option>
+                        <Select.Option value="@aol.com">@aol.com</Select.Option>
+                        <Select.Option value="@icloud.com">@icloud.com</Select.Option>
+                        <Select.Option value="@mail.com">@mail.com</Select.Option>
+                        <Select.Option value="@protonmail.com">@protonmail.com</Select.Option>
+                        <Select.Option value=".org">.org</Select.Option>
+                        <Select.Option value=".com">.com</Select.Option>
+                        <Select.Option value=".net">.com</Select.Option>
+                    </Select>
+                );
+                return (
+                    <Row key={index} style={{ marginBottom: '10px' }}>
+                        <Col span={2}>
+                            {index !== 0 && (
+                                <Button
+                                    type="danger"
+                                    shape="circle"
+                                    icon={<MinusCircleOutlined />}
+                                    onClick={() => handleRemoveRow(index)}
+                                />
+                            )}
+                        </Col>
+                        <Col span={8}>
+                            <Input
+                                placeholder="Name"
+                                value={row.name}
+                                onChange={(e) => handleInputChange(e, index, 'name')}
                             />
-                        )}
-                    </Col>
-                    <Col span={9}>
-                        <Input
-                            placeholder="Name"
-                            value={row.name}
-                            onChange={(e) => handleInputChange(e, index, 'name')}
-                        />
-                    </Col>
-                    &nbsp;
-                    <Col span={9}>
-                        <Input
-                            placeholder="Phone Number"
-                            value={row.phone}
-                            onChange={(e) => handleInputChange(e, index, 'phone')}
-                            status={!row.isValid && 'error'}
-                        />
-                    </Col>
-                </Row>
-            ))}
-            <Flex justify="center">
+                        </Col>
+                        &nbsp;
+                        <Col span={12}>
+                            <Input
+                                placeholder="Email"
+                                value={row.email}
+                                onChange={(e) => handleInputChange(e, index, 'email')}
+                                status={!row.isValid && 'error'}
+                                addonAfter={selectAfter}
+                            />
+                        </Col>
+                    </Row>
+                )
+            })}
+            <Flex justify="center" gap={8}>
                 <Button type="primary" onClick={handleAddRow} icon={<PlusOutlined />}>
                     Add
                 </Button>
-                &nbsp;
                 <Button
                     type="primary"
                     onClick={handleCreateHat}
                     icon={<SendOutlined />}
                     disabled={
                         !(rows.length > 1)
-                        && rows.some((row) =>
-                            row.name === ''
-                            || row.phone === ''
-                            || !row.isValid
-                        )
+                        || rows.some((row) => row.name === '' || row.email === '' || !row.isValid)
                     }
                     loading={isSending}
                 >
                     Create Hat!
+                </Button>
+                <Button
+                    type="primary"
+                    style={{
+                        background: "IndianRed",
+                    }}
+                    onClick={() => {
+                        setRows([...rowsInit]);
+                        setListOpen(false)
+                    }}
+                    disabled={isSending}
+                >
+                    Back
                 </Button>
             </Flex>
         </div>

@@ -11,3 +11,53 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed&display=swap");
+
+svg {
+  font-family: "Sansita Swashed", sans-serif;
+  width: 100%;
+  height: 100%;
+}
+
+svg text {
+  animation: stroke 5s infinite alternate;
+  stroke-width: 2;
+  stroke: indianred;
+  font-size: 80px;
+}
+
+@keyframes stroke {
+  0% {
+    fill: rgba(204, 12, 12, 0);
+    stroke: indianred;
+    stroke-dashoffset: 25%;
+    stroke-dasharray: 0 50%;
+    stroke-width: 2;
+  }
+
+  70% {
+    fill: rgba(204, 12, 12, 0);
+    stroke: Indianred;
+  }
+
+  80% {
+    fill: rgba(204, 12, 12, 0);
+    stroke: Indianred;
+    stroke-width: 3;
+  }
+
+  100% {
+    fill: indianred;
+    stroke: rgba(255, 17, 15, 0);
+    stroke-dashoffset: -25%;
+    stroke-dasharray: 50% 0;
+    stroke-width: 0;
+  }
+}
+
+.wrapper {
+  background-color: #FFFFFF
+}
+
+;

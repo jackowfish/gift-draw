@@ -1,10 +1,7 @@
 // Import React and Ant Design components
 import React, { useState } from "react";
-import { Button, Typography } from "antd";
+import { Button } from "antd";
 import NameList from "./NameList";
-
-// Destructure Title from Typography
-const { Title } = Typography;
 
 const GiftDraw = () => {
   const [listOpen, setListOpen] = useState(false);
@@ -12,15 +9,19 @@ const GiftDraw = () => {
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       {!listOpen && (
         <>
-          <Title>GIFTDRAW</Title>
-          <Button type="primary" size="large" onClick={setListOpen}>
+          <div class="wrapper">
+            <svg>
+              <text x="50%" y="50%" dy=".35em" text-anchor="middle">
+                GIFT DRAW
+              </text>
+            </svg>
+          </div>
+          <Button type="primary" size="large" onClick={setListOpen} style={{ backgroundColor: 'Indianred' }}>
             Create a hat
           </Button>
         </>
       )}
-      {listOpen && (
-        <NameList />
-      )}
+      <NameList listOpen={listOpen} setListOpen={setListOpen} />
     </div>
   );
 };

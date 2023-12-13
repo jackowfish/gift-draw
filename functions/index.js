@@ -1,19 +1,28 @@
 const functions = require("firebase-functions");
-const twilio = require("twilio");
+const nodemailer = require("nodemailer");
 
-const accountSid = functions.config().twilio.sid;
-const authToken = functions.config().twilio.token;
-const twilioClient = twilio(accountSid, authToken);
+const { account, app_password } = functions.config().gmail;
 
-exports.sendTwilioSMS = functions.https.onCall((data) => {
-  const { to, body } = data;
+exports.sendGmail = functions.https.onCall((data) => {
+  const { to, subject, text } = data;
 
-  return twilioClient.messages
-    .create({
-      body: body,
-      from: "+14843095079",
-      to: to,
-    })
-    .then((message) => ({ success: true, sid: message.sid }))
+  const mailTransport = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth: {
+      user: account,
+      pass: app_password,
+    },
+  });
+
+  const mailOptions = {
+    to: to,
+    subject: subject,
+    text: text,
+  };
+
+  return mailTransport
+    .sendMail(mailOptions)
+    .then(() => ({ success: true }))
     .catch((error) => ({ success: false, error: error.message }));
 });

@@ -26,7 +26,7 @@ const GiftDraw = () => {
       </Flex>
       <NameList listOpen={listOpen} setListOpen={setListOpen} />
       <p style={{ position: "fixed", bottom: 0, width: "100%", textAlign: "center", color: "grey" }}>
-        Made with ❤️ by jackowfish
+        Made with ❤️ by Jack Decker
       </p>
     </div>
   );

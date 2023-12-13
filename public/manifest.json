@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Gift Draw",
+  "name": "Gift Draw: Pick names out of the hat!",
   "icons": [
     {
       "src": "favicon.ico",

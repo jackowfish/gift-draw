@@ -136,38 +136,46 @@ const NameList = ({ listOpen, setListOpen }) => {
                                 </Select>
                             );
                             return (
-                                <Row key={index} style={{ marginBottom: '10px' }}>
-                                    <Col span={2}>
-                                        {index !== 0 && (
+                                <Row key={index} gutter={[16, 16]} align="middle" style={{ marginBottom: '10px' }}>
+                                    {index !== 0 && (
+                                        <Col xs={2} sm={2}>
                                             <Button
                                                 type="danger"
                                                 shape="circle"
                                                 icon={<MinusCircleOutlined />}
                                                 onClick={() => handleRemoveRow(index)}
+                                                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
                                             />
-                                        )}
-                                    </Col>
-                                    <Col span={8}>
-                                        <Input
-                                            placeholder="Name"
-                                            value={row.name}
-                                            onChange={(e) => handleInputChange(e, index, 'name')}
-                                        />
-                                    </Col>
-                                    &nbsp;
-                                    <Col span={12}>
-                                        <Input
-                                            placeholder="Email"
-                                            value={row.email}
-                                            onChange={(e) => handleInputChange(e, index, 'email')}
-                                            status={!row.isValid && 'error'}
-                                            addonAfter={selectAfter}
-                                        />
+                                        </Col>
+                                    )}
+
+                                    <Col xs={20} sm={22} style={{ marginLeft: index === 0 ? 34 : 0 }}>
+                                        <Row>
+                                            <Col span={24}>
+                                                <Input
+                                                    style={{ width: '90%', marginBottom: 4 }}
+                                                    placeholder="Name"
+                                                    value={row.name}
+                                                    onChange={(e) => handleInputChange(e, index, 'name')}
+                                                />
+                                            </Col>
+                                            <Col span={24}>
+                                                <Input
+                                                    style={{ width: '90%' }}
+                                                    placeholder="Email"
+                                                    value={row.email}
+                                                    onChange={(e) => handleInputChange(e, index, 'email')}
+                                                    status={!row.isValid && 'error'}
+                                                    addonAfter={selectAfter}
+                                                />
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                             )
+
                         })}
-                        <Flex justify="center" gap={8}>
+                        <Flex justify="center" gap={8} style={{ marginTop: '24px' }}>
                             <Button type="primary" onClick={handleAddRow} icon={<PlusOutlined />}>
                                 Add
                             </Button>

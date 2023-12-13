@@ -15,7 +15,7 @@ const GiftDraw = () => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <Flex vertical gap={12} align="center">
+      <Flex vertical gap={24} align="center">
         <img src={logo} className="App-logo" alt="logo" />
         {!listOpen && (
           <>
@@ -51,8 +51,8 @@ const GiftDraw = () => {
             </Flex>
           </>
         )}
+        <NameList listOpen={listOpen} setListOpen={setListOpen} />
       </Flex>
-      <NameList listOpen={listOpen} setListOpen={setListOpen} />
       <p style={{ position: "fixed", bottom: 0, width: "100%", textAlign: "center", color: "grey" }}>
         Made with ❤️ by Jack Decker
       </p>

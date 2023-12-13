@@ -1,4 +1,3 @@
-// Import React and Ant Design components
 import React, { useState } from "react";
 import logo from "./logo.svg";
 import { Button, Flex } from "antd";

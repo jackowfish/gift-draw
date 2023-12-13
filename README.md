@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# Getting Started with GiftDraw
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to GiftDraw, the convenient web app that brings a modern twist to the traditional "Secret Santa" draw. With GiftDraw, users can easily submit a list of names and emails, and our system will randomly assign each person someone to gift. Let's make gift-giving more exciting and hassle-free!
 
-## Available Scripts
+This project is powered by [Create React App](https://github.com/facebook/create-react-app).
 
-In the project directory, you can run:
+## Quick Start
+
+In the GiftDraw directory, you have access to several commands to manage the app:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Launches GiftDraw in development mode.
+- Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- The page will auto-reload for any edits.
+- Console will display lint errors, if any.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Initiates the test runner in an interactive watch mode.
+- More about testing: [running tests](https://facebook.github.io/create-react-app/docs/running-tests).
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Compiles the app for production into the `build` folder.
+- It ensures optimal performance and bundles React in production mode.
+- Ready for deployment post-build.
 
 ### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Note: Irreversible once executed!**
+- Use `eject` to customize build tools and configurations.
+- Post-ejection, you control all configurations and dependencies.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Further Learning
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- GiftDraw specifics and React guidance: [React documentation](https://reactjs.org/).
+- Create React App insights: [documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Additional Features
 
-## Learn More
+- **Gift Assignment Algorithm**: Ensures fair and random assignment without duplicates.
+- **Email Integration**: Automatically notifies participants of their assigned giftee.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Deployment and Customization
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Deployment guide: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment).
+- For advanced configurations: [advanced configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration).
 
-### Code Splitting
+## Need Help?
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Common build issues: [troubleshooting guide](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify).

@@ -176,7 +176,12 @@ const NameList = ({ listOpen, setListOpen }) => {
 
                         })}
                         <Flex justify="center" gap={8} style={{ marginTop: '24px' }}>
-                            <Button type="primary" onClick={handleAddRow} icon={<PlusOutlined />}>
+                            <Button
+                                type="primary"
+                                onClick={handleAddRow}
+                                icon={<PlusOutlined />}
+                                disabled={isSending}
+                            >
                                 Add
                             </Button>
                             <Button

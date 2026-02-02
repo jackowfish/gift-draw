@@ -20,7 +20,7 @@ jobs:
               env:
                 PORTER_APP_NAME: gift-draw
                 PORTER_CLUSTER: "1"
-                PORTER_DEPLOYMENT_TARGET_ID: df6542ed-a991-4dca-b408-a2840a4cb3fd
+                PORTER_DEPLOYMENT_TARGET_ID: 5a131d2e-874a-4ea1-9c2c-2cd76e973cfd
                 PORTER_HOST: https://jack.withporter.run
                 PORTER_PROJECT: "1"
                 PORTER_TAG: ${{ steps.vars.outputs.sha_short }}

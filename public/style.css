@@ -2,6 +2,7 @@
    Night-sky scene up top, snowy pines at the bottom, soft floating panels. */
 
 :root {
+  color-scheme: light;
   --sky-1: #0b2447;
   --sky-2: #163a72;
   --sky-3: #245fa6;
@@ -96,27 +97,33 @@ body {
   to   { opacity: 1; }
 }
 
+/* Hills live in the background scene, so they sit fixed at the viewport
+   bottom and don't add to scroll height. */
 .hills {
   position: absolute;
   left: 0; right: 0; bottom: 0;
   width: 100%;
-  height: 38vh;
-  min-height: 280px;
+  height: 30vh;
+  min-height: 220px;
   display: block;
+  pointer-events: none;
 }
 
 .sleigh {
   position: absolute;
-  top: 14%;
-  left: -140px;
-  width: 120px;
-  height: 40px;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
-  animation: sleighAcross 35s linear infinite;
+  top: 12%;
+  left: -260px;
+  width: 240px;
+  height: 90px;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45));
+  animation: sleighAcross 38s linear infinite;
 }
 @keyframes sleighAcross {
-  0%   { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(calc(100vw + 200px), -30px, 0); }
+  /* gentle arc across the sky with a tiny vertical wobble */
+  0%   { transform: translate3d(0, 0, 0) rotate(-3deg); }
+  35%  { transform: translate3d(calc(40vw + 100px), -22px, 0) rotate(-1deg); }
+  70%  { transform: translate3d(calc(75vw + 200px), 6px, 0) rotate(2deg); }
+  100% { transform: translate3d(calc(100vw + 320px), -10px, 0) rotate(0deg); }
 }
 
 /* Snowfall - three layered repeating gradients drifting down. */
@@ -187,23 +194,6 @@ body {
 .brand-gift { color: var(--gold); }
 .brand-draw { color: #fff; }
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.nav-pill {
-  font-family: "Fredoka", "Lato", sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  padding: 7px 14px;
-  border-radius: 999px;
-}
-
 /* ---------- Layout ---------- */
 main {
   position: relative;
@@ -214,7 +204,7 @@ main {
   padding:
     8px
     calc(18px + env(safe-area-inset-right))
-    calc(40vh + env(safe-area-inset-bottom))
+    24px
     calc(18px + env(safe-area-inset-left));
 }
 
@@ -608,6 +598,28 @@ input:focus {
   transform: scale(1.25);
   accent-color: var(--red);
   cursor: pointer;
+  flex-shrink: 0;
+}
+.toggle-inline {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 10px 12px;
+  margin: 14px 0 4px;
+  background: rgba(17, 36, 61, 0.04);
+  border: 1px dashed rgba(17, 36, 61, 0.12);
+  border-radius: 12px;
+}
+.toggle-inline input { margin-top: 2px; }
+.toggle-inline > span {
+  font-weight: 600;
+}
+.toggle-hint {
+  flex-basis: 100%;
+  margin-left: 30px;
+  font-style: normal;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ---------- Members list ---------- */
@@ -853,9 +865,58 @@ input:focus {
 }
 .host-row .btn { flex: 1; }
 
+/* ---------- Footer signature ----------
+   The fixed scene shows white snow hills at the viewport bottom, so the
+   footer wraps its text in a pill-shaped dark backdrop that stays readable
+   over either the dark sky or the snow when scrolled. */
+.site-footer {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+}
+.site-footer .credit {
+  display: inline-block;
+  font-family: "Fredoka", "Lato", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(7, 18, 38, 0.4);
+  padding: 7px 16px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.site-footer .heart {
+  color: var(--red);
+  display: inline-block;
+  margin: 0 2px;
+  animation: heartBeat 1.6s ease-in-out infinite;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  20%      { transform: scale(1.2); }
+  40%      { transform: scale(0.95); }
+  60%      { transform: scale(1.1); }
+}
+/* Signature link blends into the surrounding text - only a faint dotted
+   underline hints it's clickable, surfaces fully on hover. */
+.site-footer .signature {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.35);
+  padding-bottom: 1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-footer .signature:hover {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.7);
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 480px) {
-  main { padding-bottom: calc(36vh + env(safe-area-inset-bottom)); }
   .panel-body { padding: 22px 18px 26px; }
   .hero-title { font-size: 32px; }
   .members { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -863,8 +924,8 @@ input:focus {
   .room-actions { justify-content: flex-start; }
   .room-code-box code { font-size: 30px; letter-spacing: 6px; }
   .brand-text { font-size: 22px; }
-  .nav-pill { display: none; }
   .top-nav { padding-top: calc(10px + env(safe-area-inset-top)); }
+  .sleigh { width: 180px; height: 68px; }
 }
 
 @media (max-width: 360px) {

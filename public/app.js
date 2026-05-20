@@ -61,22 +61,26 @@ function applyHashMode() {
     $("lobbyTagline").classList.remove("hidden");
     $("joinBanner").classList.add("hidden");
   }
+  if (typeof syncLobbyEmailVisibility === "function") syncLobbyEmailVisibility();
 }
 
 async function createRoom() {
   const name = $("name").value.trim();
   const email = $("email").value.trim();
   const occasion = $("occasion").value.trim();
+  const collectEmails = $("collectEmails").checked;
   if (!name) { $("lobbyErr").textContent = "enter your name"; return; }
-  if (!email || !isEmailValid(email)) { $("lobbyErr").textContent = "enter a valid email"; return; }
+  if (collectEmails && (!email || !isEmailValid(email))) {
+    $("lobbyErr").textContent = "enter a valid email"; return;
+  }
   profile.set({ name, email });
 
   const res = await fetch("/api/rooms", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, occasion }),
+    body: JSON.stringify({ name, occasion, collectEmails }),
   });
-  if (!res.ok) { $("lobbyErr").textContent = "couldn't create hat"; return; }
+  if (!res.ok) { $("lobbyErr").textContent = "couldn't create draw"; return; }
   const { roomId, hostId, hostToken } = await res.json();
   store.set(roomId, { memberId: hostId, hostToken });
   location.hash = roomId;
@@ -87,9 +91,11 @@ function joinRoom(codeOverride) {
   const code = (codeOverride || $("joinCode").value).trim().toUpperCase();
   const name = $("name").value.trim();
   const email = $("email").value.trim();
-  if (!code) { $("lobbyErr").textContent = "enter a hat code"; return; }
+  if (!code) { $("lobbyErr").textContent = "enter a draw code"; return; }
   if (!name) { $("lobbyErr").textContent = "enter your name"; return; }
-  if (!email || !isEmailValid(email)) { $("lobbyErr").textContent = "enter a valid email"; return; }
+  // Email is optional at join time - the room may not collect emails. If one
+  // was typed, it has to look valid though.
+  if (email && !isEmailValid(email)) { $("lobbyErr").textContent = "enter a valid email"; return; }
   profile.set({ name, email });
   location.hash = code;
   enterRoom(code, { name, email });
@@ -148,6 +154,7 @@ function render() {
   if (!latest) return;
   const s = latest;
   const drawn = s.state === "drawn";
+  const collectEmails = s.collectEmails !== false;
 
   $("stateLabel").textContent = drawn ? "Drawn" : "Collecting";
   $("stateLabel").classList.toggle("drawn", drawn);
@@ -165,17 +172,22 @@ function render() {
 
   const meMember = s.members.find((m) => m.id === me.memberId);
   if (meMember) {
-    // sync the skipDraw checkbox + email field visibility from server truth
+    // Email field hides entirely when the room isn't collecting emails, and
+    // also for a host who's opted out of the draw.
+    const hideEmailField =
+      !collectEmails || (me.isHost && !!meMember.skipDraw);
+    $("myEmailField").classList.toggle("hidden", hideEmailField);
     if (me.isHost) {
       $("skipDraw").checked = !!meMember.skipDraw;
-      $("myEmailField").classList.toggle("hidden", !!meMember.skipDraw);
     }
     if (meMember.skipDraw) {
       $("myStatus").textContent = "You won't get a pick, just running the draw.";
+    } else if (meMember.ready) {
+      $("myStatus").textContent = "You're ready ✓";
+    } else if (collectEmails) {
+      $("myStatus").textContent = "Fill in your name and email so the host can draw.";
     } else {
-      $("myStatus").textContent = meMember.ready
-        ? "You're ready ✓"
-        : "Fill in your name and email so the host can draw.";
+      $("myStatus").textContent = "Add your name so the host can draw.";
     }
   }
 
@@ -184,6 +196,9 @@ function render() {
     if (s.yourPick) {
       show($("result"));
       $("pickName").textContent = s.yourPick.name;
+      $("pickDetail").textContent = collectEmails
+        ? "Check your inbox for the same info."
+        : "Keep this on screen, the draw doesn't send any emails.";
     } else if (meMember && meMember.skipDraw) {
       show($("result"));
       $("pickName").textContent = "🎁";
@@ -253,6 +268,16 @@ function scheduleMyInfoUpdate(immediate = false) {
   if (immediate) fire();
   else updateTimer = setTimeout(fire, 300);
 }
+
+function syncLobbyEmailVisibility() {
+  // In create mode, the host's own email is only needed if they're going
+  // to email picks out. In join mode, the email field stays visible but
+  // optional since we don't know the room's setting until we connect.
+  const inJoinMode = !$("joinBlock").classList.contains("hidden");
+  const hide = !inJoinMode && !$("collectEmails").checked;
+  $("emailField").classList.toggle("hidden", hide);
+}
+$("collectEmails").addEventListener("change", syncLobbyEmailVisibility);
 
 $("create").addEventListener("click", createRoom);
 $("join").addEventListener("click", () => joinRoom());

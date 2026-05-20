@@ -131,7 +131,10 @@ function enterRoom(roomId, { name, email, hostToken } = {}) {
           $("youAre").textContent = me.isHost ? "host" : "guest";
           $("myName").value = name || "";
           $("myEmail").value = email || "";
-          if (me.isHost) show($("hostRow"));
+          if (me.isHost) {
+            show($("hostRow"));
+            show($("skipDrawRow"));
+          }
         }
       }
     );
@@ -149,8 +152,9 @@ function render() {
   $("stateLabel").textContent = drawn ? "drawn" : "collecting";
   $("stateLabel").classList.toggle("drawn", drawn);
 
-  const readyCount = s.members.filter((m) => m.ready).length;
-  $("counts").textContent = `${readyCount}/${s.members.length} ready`;
+  const inDraw = s.members.filter((m) => !m.skipDraw);
+  const readyCount = inDraw.filter((m) => m.ready).length;
+  $("counts").textContent = `${readyCount}/${inDraw.length} ready`;
 
   if (s.occasion) {
     show($("occasionLine"));
@@ -161,9 +165,18 @@ function render() {
 
   const meMember = s.members.find((m) => m.id === me.memberId);
   if (meMember) {
-    $("myStatus").textContent = meMember.ready
-      ? "you're ready ✓"
-      : "fill in your name and email so the host can draw";
+    // sync the skipDraw checkbox + email field visibility from server truth
+    if (me.isHost) {
+      $("skipDraw").checked = !!meMember.skipDraw;
+      $("myEmailField").classList.toggle("hidden", !!meMember.skipDraw);
+    }
+    if (meMember.skipDraw) {
+      $("myStatus").textContent = "you won't get a pick — just running the draw.";
+    } else {
+      $("myStatus").textContent = meMember.ready
+        ? "you're ready ✓"
+        : "fill in your name and email so the host can draw";
+    }
   }
 
   if (drawn) {
@@ -171,6 +184,10 @@ function render() {
     if (s.yourPick) {
       show($("result"));
       $("pickName").textContent = s.yourPick.name;
+    } else if (meMember && meMember.skipDraw) {
+      show($("result"));
+      $("pickName").textContent = "🎁";
+      $("pickDetail").textContent = "you sat this one out — everyone else got their pick.";
     } else if (meMember) {
       show($("result"));
       $("pickName").textContent = "—";
@@ -192,12 +209,16 @@ function render() {
   ul.innerHTML = "";
   for (const m of s.members) {
     const li = document.createElement("li");
-    if (m.ready) li.classList.add("ready");
+    if (m.skipDraw) li.classList.add("skip");
+    else if (m.ready) li.classList.add("ready");
     const tags = [];
     if (m.id === me.memberId) tags.push(`<span class="you-tag">you</span>`);
     if (m.isHost) tags.push(`<span class="host-tag">host</span>`);
+    if (m.skipDraw) tags.push(`<span class="skip-tag">not in draw</span>`);
     const name = m.name || "…";
-    const status = m.ready ? "ready ✓" : "needs info";
+    const status = m.skipDraw
+      ? "running the draw"
+      : (m.ready ? "ready ✓" : "needs info");
     const kick = me.isHost && !m.isHost && m.id !== me.memberId && !drawn
       ? `<button class="kick-btn" data-id="${m.id}" title="remove">✕</button>`
       : "";
@@ -216,17 +237,21 @@ function escapeHtml(s) {
   })[c]);
 }
 
-function scheduleMyInfoUpdate() {
+function scheduleMyInfoUpdate(immediate = false) {
   clearTimeout(updateTimer);
-  updateTimer = setTimeout(() => {
+  const fire = () => {
     if (!socket) return;
     const name = $("myName").value.trim();
     const email = $("myEmail").value.trim();
     profile.set({ name, email });
-    socket.emit("update", { name, email }, (r) => {
+    const payload = { name, email };
+    if (me.isHost) payload.skipDraw = $("skipDraw").checked;
+    socket.emit("update", payload, (r) => {
       if (r?.error) console.warn(r.error);
     });
-  }, 300);
+  };
+  if (immediate) fire();
+  else updateTimer = setTimeout(fire, 300);
 }
 
 $("create").addEventListener("click", createRoom);
@@ -238,10 +263,15 @@ $("backToMain").addEventListener("click", () => {
 });
 window.addEventListener("hashchange", applyHashMode);
 
-$("myName").addEventListener("input", scheduleMyInfoUpdate);
-$("myEmail").addEventListener("input", scheduleMyInfoUpdate);
-$("myName").addEventListener("blur", scheduleMyInfoUpdate);
-$("myEmail").addEventListener("blur", scheduleMyInfoUpdate);
+$("myName").addEventListener("input", () => scheduleMyInfoUpdate());
+$("myEmail").addEventListener("input", () => scheduleMyInfoUpdate());
+$("myName").addEventListener("blur", () => scheduleMyInfoUpdate());
+$("myEmail").addEventListener("blur", () => scheduleMyInfoUpdate());
+$("skipDraw").addEventListener("change", () => {
+  const skip = $("skipDraw").checked;
+  $("myEmailField").classList.toggle("hidden", skip);
+  scheduleMyInfoUpdate(true);
+});
 
 $("drawBtn").addEventListener("click", () => {
   $("drawBtn").disabled = true;

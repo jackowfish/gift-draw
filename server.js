@@ -62,6 +62,9 @@ const TTL = 60 * 60 * 24 * 7;
 
 const isEmailValid = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
+const memberReady = (m) =>
+  !!m.name && (m.skipDraw || (m.email && isEmailValid(m.email)));
+
 const firstName = (n) => (n || "").trim().split(/\s+/)[0] || n;
 
 async function refreshTtl(roomId) {
@@ -102,7 +105,8 @@ async function publicState(roomId, viewerId) {
       return {
         id,
         name: m.name || "",
-        ready: !!(m.name && m.email && isEmailValid(m.email)),
+        ready: memberReady(m),
+        skipDraw: !!m.skipDraw,
         isHost: id === r.meta.hostId,
       };
     }),
@@ -226,6 +230,7 @@ io.on("connection", (socket) => {
     await redis.hset(keys.members(roomId), id, JSON.stringify({
       name: cleanName,
       email: cleanEmail,
+      skipDraw: !!existing.skipDraw,
     }));
     await refreshTtl(roomId);
 
@@ -235,8 +240,8 @@ io.on("connection", (socket) => {
     broadcast(roomId);
   });
 
-  socket.on("update", async ({ name, email }, ack) => {
-    const { roomId, memberId } = socket.data || {};
+  socket.on("update", async ({ name, email, skipDraw }, ack) => {
+    const { roomId, memberId, isHost } = socket.data || {};
     if (!roomId || !memberId) return ack?.({ error: "not joined" });
     const r = await loadRoom(roomId);
     if (!r) return ack?.({ error: "room not found" });
@@ -244,9 +249,15 @@ io.on("connection", (socket) => {
     const existing = r.members[memberId] || {};
     const cleanName = (name ?? existing.name ?? "").toString().trim().slice(0, 40);
     const cleanEmail = (email ?? existing.email ?? "").toString().trim().slice(0, 120);
+    // Only the host can mark themselves as not participating in the draw.
+    // Other members always participate.
+    const cleanSkip = isHost && typeof skipDraw === "boolean"
+      ? skipDraw
+      : !!existing.skipDraw;
     await redis.hset(keys.members(roomId), memberId, JSON.stringify({
       name: cleanName,
       email: cleanEmail,
+      skipDraw: cleanSkip,
     }));
     await refreshTtl(roomId);
     ack?.({ ok: true });
@@ -272,10 +283,11 @@ io.on("connection", (socket) => {
     if (!r) return ack?.({ error: "room not found" });
     if (r.state === "drawn") return ack?.({ error: "already drawn" });
 
+    // Only members who (a) are ready and (b) aren't opting out get a pick.
     const ready = Object.entries(r.members).filter(([, m]) =>
-      m.name && m.email && isEmailValid(m.email)
+      !m.skipDraw && m.name && m.email && isEmailValid(m.email)
     );
-    if (ready.length < 2) return ack?.({ error: "need at least 2 people ready" });
+    if (ready.length < 2) return ack?.({ error: "need at least 2 people in the draw" });
 
     const ids = ready.map(([id]) => id);
     const map = derangement(ids);

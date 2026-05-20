@@ -5,109 +5,239 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="gift draw" />
-  <meta name="theme-color" content="#d62828" />
-  <title>Gift Draw 🎄</title>
+  <meta name="apple-mobile-web-app-title" content="Gift Draw" />
+  <meta name="theme-color" content="#0b2447" />
+  <title>Gift Draw</title>
   <link rel="icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div class="bg">
-    <div class="blob blob-a"></div>
-    <div class="blob blob-b"></div>
-    <div class="blob blob-c"></div>
+  <!-- Night-sky scene with stars, distant aurora, snowy hills + pines -->
+  <div class="scene" aria-hidden="true">
+    <div class="aurora"></div>
+    <div class="stars"></div>
+    <div class="snowfall snowfall-a"></div>
+    <div class="snowfall snowfall-b"></div>
+    <div class="snowfall snowfall-c"></div>
+
+    <svg class="hills" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+      <!-- back hills -->
+      <path d="M0 260 C 180 200, 360 320, 540 260 S 900 180, 1080 250 1440 220 1440 420 0 420 Z" fill="#1b3a6b"/>
+      <!-- pines back row -->
+      <g fill="#0e2547">
+        <polygon points="90,260 110,210 130,260"/>
+        <polygon points="230,250 260,180 290,250"/>
+        <polygon points="430,245 460,170 490,245"/>
+        <polygon points="640,255 670,190 700,255"/>
+        <polygon points="860,250 890,178 920,250"/>
+        <polygon points="1080,255 1110,185 1140,255"/>
+        <polygon points="1280,250 1310,180 1340,250"/>
+      </g>
+      <!-- front hill -->
+      <path d="M0 320 C 200 280, 400 360, 640 310 S 1100 280, 1440 320 L1440 420 0 420 Z" fill="#ffffff"/>
+      <!-- pines front row -->
+      <g fill="#0e6b3a">
+        <polygon points="60,330 90,250 120,330"/>
+        <polygon points="160,338 200,240 240,338"/>
+        <polygon points="320,332 360,235 400,332"/>
+        <polygon points="520,330 555,245 590,330"/>
+        <polygon points="720,330 760,225 800,330"/>
+        <polygon points="940,332 980,238 1020,332"/>
+        <polygon points="1140,330 1180,238 1220,330"/>
+        <polygon points="1340,335 1380,250 1420,335"/>
+      </g>
+      <!-- snowy caps on front pines -->
+      <g fill="#ffffff">
+        <polygon points="90,253 100,265 80,265"/>
+        <polygon points="200,244 213,260 187,260"/>
+        <polygon points="360,238 373,254 347,254"/>
+        <polygon points="555,248 568,264 542,264"/>
+        <polygon points="760,228 775,246 745,246"/>
+        <polygon points="980,242 993,258 967,258"/>
+        <polygon points="1180,242 1193,258 1167,258"/>
+        <polygon points="1380,253 1393,269 1367,269"/>
+      </g>
+    </svg>
+
+    <!-- Tiny sleigh + reindeer drifting across the sky -->
+    <svg class="sleigh" viewBox="0 0 120 40" aria-hidden="true">
+      <g fill="#fff">
+        <circle cx="6" cy="20" r="2"/>
+        <circle cx="14" cy="18" r="2"/>
+        <circle cx="22" cy="20" r="2"/>
+      </g>
+      <g fill="#8c5a2c">
+        <path d="M40 22 l4 -8 l3 6 l4 -7 l3 7 l4 -6 l3 8 z"/>
+        <rect x="38" y="22" width="22" height="3" rx="1"/>
+      </g>
+      <g fill="#c2272d">
+        <path d="M64 18 q14 -4 30 0 q-2 8 -8 10 l-22 0 q-4 -4 0 -10 z"/>
+        <rect x="66" y="28" width="26" height="2" fill="#7a161a"/>
+      </g>
+      <g fill="#ffd54f">
+        <circle cx="78" cy="24" r="1.2"/>
+        <circle cx="84" cy="22" r="1.2"/>
+        <circle cx="90" cy="24" r="1.2"/>
+      </g>
+    </svg>
   </div>
 
+  <!-- Top nav ribbon - santa tracker style -->
+  <header class="top-nav" role="banner">
+    <a href="/" class="brand" aria-label="Gift Draw home">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <!-- present box -->
+        <rect x="8" y="22" width="48" height="34" rx="4" fill="#e63946"/>
+        <rect x="8" y="32" width="48" height="6" fill="#b32230"/>
+        <rect x="29" y="22" width="6" height="34" fill="#ffd54f"/>
+        <!-- bow -->
+        <path d="M32 22 c-6 -10 -18 -10 -18 -2 c0 6 10 6 18 2 z" fill="#ffd54f"/>
+        <path d="M32 22 c 6 -10 18 -10 18 -2 c 0 6 -10 6 -18 2 z" fill="#ffd54f"/>
+        <circle cx="32" cy="22" r="3" fill="#c9931a"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-gift">Gift</span><span class="brand-draw">Draw</span>
+      </span>
+    </a>
+    <nav class="nav-links" aria-label="navigation">
+      <span class="nav-pill" id="navStatus">santa's workshop</span>
+    </nav>
+  </header>
+
   <main id="app">
-    <section id="lobby" class="card">
-      <h1 class="title">Gift<span>Draw</span></h1>
-      <p class="tagline" id="lobbyTagline">Create a hat, share the link, everyone draws a name.</p>
-      <p class="join-banner hidden" id="joinBanner">
-        Joining hat <code id="joinBannerCode"></code>
-      </p>
+    <section id="lobby" class="panel">
+      <div class="panel-head">
+        <div class="bauble bauble-red"></div>
+        <div class="bauble bauble-green"></div>
+        <div class="bauble bauble-gold"></div>
+      </div>
 
-      <label class="field">
-        <span>your name</span>
-        <input id="name" placeholder="alex" maxlength="40" autocomplete="name" />
-      </label>
+      <div class="panel-body">
+        <h1 class="hero-title">
+          <span>Draw names.</span>
+          <span class="hero-accent">Send joy.</span>
+        </h1>
+        <p class="hero-sub" id="lobbyTagline">Start a draw, share the link, everyone finds out who they got.</p>
 
-      <label class="field" id="emailField">
-        <span>your email</span>
-        <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="alex@example.com" maxlength="120" />
-      </label>
+        <p class="join-banner hidden" id="joinBanner">
+          You're joining <code id="joinBannerCode"></code>
+        </p>
 
-      <div id="createBlock">
-        <label class="field">
-          <span>occasion (optional)</span>
-          <input id="occasion" placeholder="secret santa, birthday, etc." maxlength="60" />
-        </label>
-        <button id="create" class="btn btn-primary btn-big">Create a hat</button>
-        <div class="divider"><span>or join</span></div>
-        <div class="row">
-          <input id="joinCode" placeholder="HAT CODE" maxlength="6" class="code-input" />
-          <button id="join" class="btn btn-secondary">jump in</button>
+        <div class="fields">
+          <label class="field">
+            <span>Your name</span>
+            <input id="name" placeholder="Alex" maxlength="40" autocomplete="name" />
+          </label>
+
+          <label class="field" id="emailField">
+            <span>Your email</span>
+            <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="alex@example.com" maxlength="120" />
+          </label>
         </div>
-      </div>
 
-      <div id="joinBlock" class="hidden">
-        <button id="joinHash" class="btn btn-primary btn-big">jump in</button>
-        <button id="backToMain" class="link back-link">← back to main</button>
-      </div>
+        <div id="createBlock">
+          <label class="field">
+            <span>Occasion <em>(optional)</em></span>
+            <input id="occasion" placeholder="Secret santa, birthday…" maxlength="60" />
+          </label>
+          <button id="create" class="btn btn-primary btn-big">
+            <span class="btn-icon" aria-hidden="true">🎁</span>
+            Start a new draw
+          </button>
 
-      <p id="lobbyErr" class="err"></p>
+          <div class="divider"><span>or join one</span></div>
+
+          <div class="join-row">
+            <input id="joinCode" placeholder="DRAW CODE" maxlength="6" class="code-input" />
+            <button id="join" class="btn btn-secondary">Join</button>
+          </div>
+        </div>
+
+        <div id="joinBlock" class="hidden">
+          <button id="joinHash" class="btn btn-primary btn-big">
+            <span class="btn-icon" aria-hidden="true">✨</span>
+            Hop in
+          </button>
+          <button id="backToMain" class="link back-link">← back</button>
+        </div>
+
+        <p id="lobbyErr" class="err" aria-live="polite"></p>
+      </div>
     </section>
 
-    <section id="room" class="card hidden">
-      <header class="room-header">
-        <div class="room-code-box">
-          <span class="label">hat code</span>
-          <code id="roomId">----</code>
-          <button id="copyLink" class="link">copy invite link</button>
-        </div>
-        <div class="right">
-          <span id="youAre" class="muted"></span>
-        </div>
-      </header>
-
-      <p id="occasionLine" class="muted occasion-line hidden"></p>
-
-      <div class="state-row">
-        <span id="stateLabel" class="pill">collecting</span>
-        <span id="counts" class="counts"></span>
+    <section id="room" class="panel hidden">
+      <div class="panel-head">
+        <div class="bauble bauble-red"></div>
+        <div class="bauble bauble-green"></div>
+        <div class="bauble bauble-gold"></div>
       </div>
 
-      <section id="myInfo" class="my-info">
-        <h3 class="sec-title">your info</h3>
-        <label class="field">
-          <span>name</span>
-          <input id="myName" maxlength="40" autocomplete="name" />
-        </label>
-        <label class="field" id="myEmailField">
-          <span>email</span>
-          <input id="myEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com" />
-        </label>
-        <label class="toggle hidden" id="skipDrawRow">
-          <input type="checkbox" id="skipDraw" />
-          <span>Don't put me in the draw (I'm just running it)</span>
-        </label>
-        <p id="myStatus" class="muted my-status"></p>
-      </section>
+      <div class="panel-body">
+        <header class="room-header">
+          <div class="room-code-box">
+            <span class="label">Draw code</span>
+            <code id="roomId">----</code>
+          </div>
+          <div class="room-actions">
+            <span id="youAre" class="role-pill"></span>
+            <button id="copyLink" class="link">Copy invite</button>
+          </div>
+        </header>
 
-      <h3 class="sec-title members-title">who's in the hat</h3>
-      <ul id="members" class="members"></ul>
+        <p id="occasionLine" class="occasion-line hidden"></p>
 
-      <div id="result" class="result hidden">
-        <div class="result-label">you drew</div>
-        <div class="big" id="pickName">—</div>
-        <p class="muted" id="pickDetail">check your email for the same info.</p>
-      </div>
+        <div class="status-bar">
+          <span id="stateLabel" class="status-chip">Collecting</span>
+          <span id="counts" class="counts"></span>
+        </div>
 
-      <div id="hostRow" class="row host-row hidden">
-        <button id="drawBtn" class="btn btn-accent btn-big">draw names!</button>
-        <button id="resetBtn" class="btn btn-secondary hidden">redraw</button>
+        <section id="myInfo" class="my-info">
+          <div class="my-info-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="my-icon"><path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.32L12 14.77l-4.78 2.51.91-5.32L4.27 8.2l5.34-.78z" fill="#ffd54f"/></svg>
+            <h3>You</h3>
+          </div>
+          <label class="field">
+            <span>Name</span>
+            <input id="myName" maxlength="40" autocomplete="name" />
+          </label>
+          <label class="field" id="myEmailField">
+            <span>Email</span>
+            <input id="myEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com" />
+          </label>
+          <label class="toggle hidden" id="skipDrawRow">
+            <input type="checkbox" id="skipDraw" />
+            <span>Don't put me in the draw (I'm just running it)</span>
+          </label>
+          <p id="myStatus" class="my-status"></p>
+        </section>
+
+        <div class="members-head">
+          <h3>Everyone in the draw</h3>
+        </div>
+        <ul id="members" class="members"></ul>
+
+        <div id="result" class="result hidden">
+          <div class="present" aria-hidden="true">
+            <div class="present-box"></div>
+            <div class="present-ribbon-v"></div>
+            <div class="present-ribbon-h"></div>
+            <div class="present-bow"></div>
+          </div>
+          <div class="result-label">You're giving to</div>
+          <div class="big" id="pickName">—</div>
+          <p class="result-sub" id="pickDetail">Check your inbox for the same info.</p>
+        </div>
+
+        <div id="hostRow" class="host-row hidden">
+          <button id="drawBtn" class="btn btn-accent btn-big">
+            <span class="btn-icon" aria-hidden="true">🎲</span>
+            Draw names
+          </button>
+          <button id="resetBtn" class="btn btn-secondary hidden">Redraw</button>
+        </div>
       </div>
     </section>
   </main>

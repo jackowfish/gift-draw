@@ -128,7 +128,7 @@ function enterRoom(roomId, { name, email, hostToken } = {}) {
           hide($("lobby"));
           show($("room"));
           $("roomId").textContent = roomId;
-          $("youAre").textContent = me.isHost ? "host" : "guest";
+          $("youAre").textContent = me.isHost ? "Host" : "Guest";
           $("myName").value = name || "";
           $("myEmail").value = email || "";
           if (me.isHost) {
@@ -149,7 +149,7 @@ function render() {
   const s = latest;
   const drawn = s.state === "drawn";
 
-  $("stateLabel").textContent = drawn ? "drawn" : "collecting";
+  $("stateLabel").textContent = drawn ? "Drawn" : "Collecting";
   $("stateLabel").classList.toggle("drawn", drawn);
 
   const inDraw = s.members.filter((m) => !m.skipDraw);
@@ -158,7 +158,7 @@ function render() {
 
   if (s.occasion) {
     show($("occasionLine"));
-    $("occasionLine").textContent = `occasion: ${s.occasion}`;
+    $("occasionLine").textContent = s.occasion;
   } else {
     hide($("occasionLine"));
   }
@@ -171,11 +171,11 @@ function render() {
       $("myEmailField").classList.toggle("hidden", !!meMember.skipDraw);
     }
     if (meMember.skipDraw) {
-      $("myStatus").textContent = "you won't get a pick — just running the draw.";
+      $("myStatus").textContent = "You won't get a pick, just running the draw.";
     } else {
       $("myStatus").textContent = meMember.ready
-        ? "you're ready ✓"
-        : "fill in your name and email so the host can draw";
+        ? "You're ready ✓"
+        : "Fill in your name and email so the host can draw.";
     }
   }
 
@@ -187,11 +187,11 @@ function render() {
     } else if (meMember && meMember.skipDraw) {
       show($("result"));
       $("pickName").textContent = "🎁";
-      $("pickDetail").textContent = "you sat this one out — everyone else got their pick.";
+      $("pickDetail").textContent = "You sat this one out, everyone else got their pick.";
     } else if (meMember) {
       show($("result"));
       $("pickName").textContent = "—";
-      $("pickDetail").textContent = "you didn't fill in your info in time.";
+      $("pickDetail").textContent = "You didn't fill in your info in time.";
     }
   } else {
     show($("myInfo"));
@@ -217,8 +217,8 @@ function render() {
     if (m.skipDraw) tags.push(`<span class="skip-tag">not in draw</span>`);
     const name = m.name || "…";
     const status = m.skipDraw
-      ? "running the draw"
-      : (m.ready ? "ready ✓" : "needs info");
+      ? "Running the draw"
+      : (m.ready ? "Ready ✓" : "Needs info");
     const kick = me.isHost && !m.isHost && m.id !== me.memberId && !drawn
       ? `<button class="kick-btn" data-id="${m.id}" title="remove">✕</button>`
       : "";
@@ -302,8 +302,8 @@ $("copyLink").addEventListener("click", async () => {
   const url = `${location.origin}/#${me.roomId}`;
   try {
     await navigator.clipboard.writeText(url);
-    $("copyLink").textContent = "copied";
-    setTimeout(() => ($("copyLink").textContent = "copy invite link"), 1500);
+    $("copyLink").textContent = "Copied!";
+    setTimeout(() => ($("copyLink").textContent = "Copy invite"), 1500);
   } catch {}
 });
 

@@ -1,43 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, user-scalable=no" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="gift draw" />
+  <meta name="theme-color" content="#0a3d2e" />
+  <title>GIFT DRAW</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="bg">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>GiftDraw</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  <main id="app">
+    <section id="lobby" class="card">
+      <h1 class="title">GIFT<span>DRAW</span></h1>
+      <p class="tagline" id="lobbyTagline">create a hat. share the link. everyone draws a name.</p>
+      <p class="join-banner hidden" id="joinBanner">
+        joining hat <code id="joinBannerCode"></code>
+      </p>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+      <label class="field">
+        <span>your name</span>
+        <input id="name" placeholder="alex" maxlength="40" autocomplete="name" />
+      </label>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+      <label class="field" id="emailField">
+        <span>your email</span>
+        <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="alex@example.com" maxlength="120" />
+      </label>
+
+      <div id="createBlock">
+        <label class="field">
+          <span>occasion (optional)</span>
+          <input id="occasion" placeholder="secret santa, birthday, etc." maxlength="60" />
+        </label>
+        <button id="create" class="btn btn-primary btn-big">create a hat</button>
+        <div class="divider"><span>or join</span></div>
+        <div class="row">
+          <input id="joinCode" placeholder="HAT CODE" maxlength="6" class="code-input" />
+          <button id="join" class="btn btn-secondary">jump in</button>
+        </div>
+      </div>
+
+      <div id="joinBlock" class="hidden">
+        <button id="joinHash" class="btn btn-primary btn-big">jump in</button>
+        <button id="backToMain" class="link back-link">← back to main</button>
+      </div>
+
+      <p id="lobbyErr" class="err"></p>
+    </section>
+
+    <section id="room" class="card hidden">
+      <header class="room-header">
+        <div class="room-code-box">
+          <span class="label">hat code</span>
+          <code id="roomId">----</code>
+          <button id="copyLink" class="link">copy invite link</button>
+        </div>
+        <div class="right">
+          <span id="youAre" class="muted"></span>
+        </div>
+      </header>
+
+      <p id="occasionLine" class="muted occasion-line hidden"></p>
+
+      <div class="state-row">
+        <span id="stateLabel" class="pill">collecting</span>
+        <span id="counts" class="counts"></span>
+      </div>
+
+      <section id="myInfo" class="my-info">
+        <h3 class="sec-title">your info</h3>
+        <label class="field">
+          <span>name</span>
+          <input id="myName" maxlength="40" autocomplete="name" />
+        </label>
+        <label class="field">
+          <span>email</span>
+          <input id="myEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com" />
+        </label>
+        <p id="myStatus" class="muted my-status"></p>
+      </section>
+
+      <h3 class="sec-title members-title">who's in the hat</h3>
+      <ul id="members" class="members"></ul>
+
+      <div id="result" class="result hidden">
+        <div class="result-label">you drew</div>
+        <div class="big" id="pickName">—</div>
+        <p class="muted" id="pickDetail">check your email for the same info.</p>
+      </div>
+
+      <div id="hostRow" class="row host-row hidden">
+        <button id="drawBtn" class="btn btn-accent btn-big">draw names!</button>
+        <button id="resetBtn" class="btn btn-secondary hidden">redraw</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
 </html>

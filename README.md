@@ -1,52 +1,24 @@
-# Getting Started with GiftDraw
+# gift-draw
 
-Welcome to GiftDraw, the convenient web app that brings a modern twist to the traditional "Secret Santa" draw. With GiftDraw, users can easily submit a list of names and emails, and our system will randomly assign each person someone to gift. Let's make gift-giving more exciting and hassle-free!
+Tiny secret-santa-style web app. Host creates a "hat", everyone joins via link
+and fills in their own name + email, host clicks draw, everyone gets emailed
+their pick.
 
-This project is powered by [Create React App](https://github.com/facebook/create-react-app).
+## Running locally
 
-## Quick Start
+```
+npm install
+GMAIL_USER=you@gmail.com GMAIL_APP_PASSWORD=xxxx npm start
+```
 
-In the GiftDraw directory, you have access to several commands to manage the app:
+Then open http://localhost:3000. With `GMAIL_*` unset, emails are logged to
+stdout instead of sent.
 
-### `npm start`
+Redis is optional locally; it defaults to `redis://127.0.0.1:6379`. Start one
+with `docker run --rm -p 6379:6379 redis:7-alpine` or set `REDIS_URL`.
 
-- Launches GiftDraw in development mode.
-- Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-- The page will auto-reload for any edits.
-- Console will display lint errors, if any.
+## Deploy
 
-### `npm test`
-
-- Initiates the test runner in an interactive watch mode.
-- More about testing: [running tests](https://facebook.github.io/create-react-app/docs/running-tests).
-
-### `npm run build`
-
-- Compiles the app for production into the `build` folder.
-- It ensures optimal performance and bundles React in production mode.
-- Ready for deployment post-build.
-
-### `npm run eject`
-
-- **Note: Irreversible once executed!**
-- Use `eject` to customize build tools and configurations.
-- Post-ejection, you control all configurations and dependencies.
-
-## Further Learning
-
-- GiftDraw specifics and React guidance: [React documentation](https://reactjs.org/).
-- Create React App insights: [documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-## Additional Features
-
-- **Gift Assignment Algorithm**: Ensures fair and random assignment without duplicates.
-- **Email Integration**: Automatically notifies participants of their assigned giftee.
-
-## Deployment and Customization
-
-- Deployment guide: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment).
-- For advanced configurations: [advanced configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration).
-
-## Need Help?
-
-- Common build issues: [troubleshooting guide](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify).
+CI in `.github/workflows/deploy.yml` builds and pushes the image to GHCR via
+the reusable workflow in `jackowfish/server-utilities`. Flux in that repo's
+`k8s/apps/gift-draw/` picks up the new tag and rolls the deployment.

@@ -95,12 +95,14 @@ const keys = {
   assignments: (r) => `room:${r}:assignments`,
 };
 
-const TTL = 60 * 60 * 24 * 7;
+// 30 days - long enough that a host can set up a draw days in advance and
+// still come back to finalize it without the room expiring.
+const TTL = 60 * 60 * 24 * 30;
 
 const isEmailValid = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
-const memberReady = (m) =>
-  !!m.name && (m.skipDraw || (m.email && isEmailValid(m.email)));
+const memberReady = (m, collectEmails) =>
+  !!m.name && (m.skipDraw || !collectEmails || (m.email && isEmailValid(m.email)));
 
 const firstName = (n) => (n || "").trim().split(/\s+/)[0] || n;
 
@@ -124,7 +126,9 @@ async function loadRoom(roomId) {
   const state = (await redis.get(keys.state(roomId))) || "collecting";
   const assignments = await redis.hgetall(keys.assignments(roomId));
   const occasion = meta.occasion || "";
-  return { meta, members, state, assignments, occasion };
+  // collectEmails defaults to true for rooms created before this field existed.
+  const collectEmails = meta.collectEmails === "false" ? false : true;
+  return { meta, members, state, assignments, occasion, collectEmails };
 }
 
 async function publicState(roomId, viewerId) {
@@ -136,13 +140,14 @@ async function publicState(roomId, viewerId) {
     roomId,
     state: r.state,
     occasion: r.occasion,
+    collectEmails: r.collectEmails,
     hostId: r.meta.hostId,
     members: memberIds.map((id) => {
       const m = r.members[id];
       return {
         id,
         name: m.name || "",
-        ready: memberReady(m),
+        ready: memberReady(m, r.collectEmails),
         skipDraw: !!m.skipDraw,
         isHost: id === r.meta.hostId,
       };
@@ -220,6 +225,9 @@ You drew ${receiver.name} ${intro}! Time to start brainstorming.
 app.post("/api/rooms", async (req, res) => {
   const name = (req.body?.name || "").toString().trim().slice(0, 40);
   const occasion = (req.body?.occasion || "").toString().trim().slice(0, 60);
+  // Host can opt out of collecting emails - picks are then revealed only
+  // in-app rather than sent over email.
+  const collectEmails = req.body?.collectEmails === false ? false : true;
   if (!name) return res.status(400).json({ error: "name required" });
 
   let roomId;
@@ -234,6 +242,7 @@ app.post("/api/rooms", async (req, res) => {
     hostId,
     hostToken,
     occasion,
+    collectEmails: collectEmails ? "true" : "false",
     createdAt: Date.now().toString(),
   });
   await redis.hset(keys.members(roomId), hostId, JSON.stringify({ name, email: "" }));
@@ -321,8 +330,9 @@ io.on("connection", (socket) => {
     if (r.state === "drawn") return ack?.({ error: "already drawn" });
 
     // Only members who (a) are ready and (b) aren't opting out get a pick.
-    const ready = Object.entries(r.members).filter(([, m]) =>
-      !m.skipDraw && m.name && m.email && isEmailValid(m.email)
+    // When the host disabled email collection, members don't need an email.
+    const ready = Object.entries(r.members).filter(
+      ([, m]) => !m.skipDraw && memberReady(m, r.collectEmails)
     );
     if (ready.length < 2) return ack?.({ error: "need at least 2 people in the draw" });
 
@@ -337,14 +347,16 @@ io.on("connection", (socket) => {
     await refreshTtl(roomId);
 
     const sendErrors = [];
-    for (const [giverId, receiverId] of Object.entries(map)) {
-      const giver = r.members[giverId];
-      const receiver = r.members[receiverId];
-      try {
-        await sendPickEmail(giver, receiver, r.occasion);
-      } catch (err) {
-        console.error(`email to ${giver.email} failed:`, err.message);
-        sendErrors.push(giver.email);
+    if (r.collectEmails) {
+      for (const [giverId, receiverId] of Object.entries(map)) {
+        const giver = r.members[giverId];
+        const receiver = r.members[receiverId];
+        try {
+          await sendPickEmail(giver, receiver, r.occasion);
+        } catch (err) {
+          console.error(`email to ${giver.email} failed:`, err.message);
+          sendErrors.push(giver.email);
+        }
       }
     }
 

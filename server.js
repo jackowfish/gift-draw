@@ -5,6 +5,7 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import Redis from "ioredis";
 import crypto from "crypto";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import nodemailer from "nodemailer";
 
@@ -42,7 +43,43 @@ io.adapter(createAdapter(pubClient, subClient));
 
 app.use(express.json());
 app.get("/health", (_req, res) => res.type("text/plain").send("ok"));
-app.use(express.static(path.join(__dirname, "public")));
+
+// Build a cache-busted index.html on startup: hash style.css / app.js and
+// rewrite their <link>/<script> refs to include ?v=<hash>. That way every
+// deploy gets a fresh URL the browser must refetch, even if Cloudflare or
+// the browser is holding a stale copy of the old asset.
+const publicDir = path.join(__dirname, "public");
+const hashFile = (rel) =>
+  crypto
+    .createHash("sha1")
+    .update(fs.readFileSync(path.join(publicDir, rel)))
+    .digest("hex")
+    .slice(0, 10);
+
+const cssV = hashFile("style.css");
+const jsV = hashFile("app.js");
+const indexHtml = fs
+  .readFileSync(path.join(publicDir, "index.html"), "utf8")
+  .replace('href="/style.css"', `href="/style.css?v=${cssV}"`)
+  .replace('src="/app.js"', `src="/app.js?v=${jsV}"`);
+
+app.get(["/", "/index.html"], (_req, res) => {
+  res.set("Cache-Control", "no-cache, must-revalidate");
+  res.type("html").send(indexHtml);
+});
+
+app.use(
+  express.static(publicDir, {
+    setHeaders(res, filePath) {
+      // Hashed query strings handle cache-busting, but keep the TTL short
+      // anyway so a missed bust still self-heals within minutes instead of
+      // hours. Cloudflare honors origin Cache-Control if it sees one set.
+      if (/\.(css|js)$/.test(filePath)) {
+        res.set("Cache-Control", "public, max-age=300, must-revalidate");
+      }
+    },
+  })
+);
 
 const rid = (n = 4) =>
   Array.from({ length: n }, () =>

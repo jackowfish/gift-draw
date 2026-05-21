@@ -24,8 +24,51 @@
     <div class="snowfall snowfall-b"></div>
     <div class="snowfall snowfall-c"></div>
 
-    <!-- Santa + reindeer + sleigh, drifting across the sky -->
-    <svg class="sleigh" viewBox="0 0 240 90" aria-hidden="true">
+    <svg class="hills" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+      <!-- back hills -->
+      <path d="M0 260 C 180 200, 360 320, 540 260 S 900 180, 1080 250 1440 220 1440 420 0 420 Z" fill="#1b3a6b"/>
+      <!-- pines back row -->
+      <g fill="#0e2547">
+        <polygon points="90,260 110,210 130,260"/>
+        <polygon points="230,250 260,180 290,250"/>
+        <polygon points="430,245 460,170 490,245"/>
+        <polygon points="640,255 670,190 700,255"/>
+        <polygon points="860,250 890,178 920,250"/>
+        <polygon points="1080,255 1110,185 1140,255"/>
+        <polygon points="1280,250 1310,180 1340,250"/>
+      </g>
+      <!-- front hill -->
+      <path d="M0 320 C 200 280, 400 360, 640 310 S 1100 280, 1440 320 L1440 420 0 420 Z" fill="#ffffff"/>
+      <!-- pines front row -->
+      <g fill="#0e6b3a">
+        <polygon points="60,330 90,250 120,330"/>
+        <polygon points="160,338 200,240 240,338"/>
+        <polygon points="320,332 360,235 400,332"/>
+        <polygon points="520,330 555,245 590,330"/>
+        <polygon points="720,330 760,225 800,330"/>
+        <polygon points="940,332 980,238 1020,332"/>
+        <polygon points="1140,330 1180,238 1220,330"/>
+        <polygon points="1340,335 1380,250 1420,335"/>
+      </g>
+      <!-- snowy caps on front pines -->
+      <g fill="#ffffff">
+        <polygon points="90,253 100,265 80,265"/>
+        <polygon points="200,244 213,260 187,260"/>
+        <polygon points="360,238 373,254 347,254"/>
+        <polygon points="555,248 568,264 542,264"/>
+        <polygon points="760,228 775,246 745,246"/>
+        <polygon points="980,242 993,258 967,258"/>
+        <polygon points="1180,242 1193,258 1167,258"/>
+        <polygon points="1380,253 1393,269 1367,269"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Santa + reindeer + sleigh — pulled out of .scene so he can fly OVER
+       the panels rather than behind them. Snowdrops fall from the sleigh as
+       it crosses the sky. -->
+  <div class="sleigh-wrap" aria-hidden="true">
+    <svg class="sleigh" viewBox="0 0 240 90">
       <!-- motion trail -->
       <g stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round" fill="none">
         <path d="M0 50 q 30 -6 60 0" opacity="0.55"/>
@@ -128,44 +171,17 @@
           <circle cx="11" cy="-7" r="1.4" fill="#fff"/>
         </g>
       </g>
-    </svg>
 
-    <svg class="hills" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
-      <!-- back hills -->
-      <path d="M0 260 C 180 200, 360 320, 540 260 S 900 180, 1080 250 1440 220 1440 420 0 420 Z" fill="#1b3a6b"/>
-      <!-- pines back row -->
-      <g fill="#0e2547">
-        <polygon points="90,260 110,210 130,260"/>
-        <polygon points="230,250 260,180 290,250"/>
-        <polygon points="430,245 460,170 490,245"/>
-        <polygon points="640,255 670,190 700,255"/>
-        <polygon points="860,250 890,178 920,250"/>
-        <polygon points="1080,255 1110,185 1140,255"/>
-        <polygon points="1280,250 1310,180 1340,250"/>
-      </g>
-      <!-- front hill -->
-      <path d="M0 320 C 200 280, 400 360, 640 310 S 1100 280, 1440 320 L1440 420 0 420 Z" fill="#ffffff"/>
-      <!-- pines front row -->
-      <g fill="#0e6b3a">
-        <polygon points="60,330 90,250 120,330"/>
-        <polygon points="160,338 200,240 240,338"/>
-        <polygon points="320,332 360,235 400,332"/>
-        <polygon points="520,330 555,245 590,330"/>
-        <polygon points="720,330 760,225 800,330"/>
-        <polygon points="940,332 980,238 1020,332"/>
-        <polygon points="1140,330 1180,238 1220,330"/>
-        <polygon points="1340,335 1380,250 1420,335"/>
-      </g>
-      <!-- snowy caps on front pines -->
-      <g fill="#ffffff">
-        <polygon points="90,253 100,265 80,265"/>
-        <polygon points="200,244 213,260 187,260"/>
-        <polygon points="360,238 373,254 347,254"/>
-        <polygon points="555,248 568,264 542,264"/>
-        <polygon points="760,228 775,246 745,246"/>
-        <polygon points="980,242 993,258 967,258"/>
-        <polygon points="1180,242 1193,258 1167,258"/>
-        <polygon points="1380,253 1393,269 1367,269"/>
+      <!-- Snow drops falling from the sleigh. Each circle has its own CSS
+           animation-delay so they emerge in a staggered stream. -->
+      <g class="snowdrops">
+        <circle class="snowdrop" cx="62"  cy="62" r="4.5"/>
+        <circle class="snowdrop" cx="76"  cy="60" r="3.6"/>
+        <circle class="snowdrop" cx="88"  cy="64" r="5.0"/>
+        <circle class="snowdrop" cx="100" cy="60" r="3.8"/>
+        <circle class="snowdrop" cx="112" cy="62" r="4.8"/>
+        <circle class="snowdrop" cx="124" cy="58" r="3.2"/>
+        <circle class="snowdrop" cx="136" cy="60" r="4.2"/>
       </g>
     </svg>
   </div>

@@ -109,14 +109,26 @@ body {
   pointer-events: none;
 }
 
-.sleigh {
-  position: absolute;
+/* Sleigh wrapper lives OUTSIDE the .scene stacking context so Santa can
+   fly above the input panels. The wrap carries the cross-screen animation;
+   the SVG inside it draws sleigh + reindeer + snowdrops. */
+.sleigh-wrap {
+  position: fixed;
   top: 12%;
   left: -260px;
   width: 240px;
   height: 90px;
-  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45));
+  /* Above the panel and its snowcap (both z-index 4) and the top nav (5),
+     so the snowdrops fall in front of the cards Santa just passed over. */
+  z-index: 6;
+  pointer-events: none;
   animation: sleighAcross 38s linear infinite;
+}
+.sleigh {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45));
 }
 @keyframes sleighAcross {
   /* gentle arc across the sky with a tiny vertical wobble */
@@ -124,6 +136,31 @@ body {
   35%  { transform: translate3d(calc(40vw + 100px), -22px, 0) rotate(-1deg); }
   70%  { transform: translate3d(calc(75vw + 200px), 6px, 0) rotate(2deg); }
   100% { transform: translate3d(calc(100vw + 320px), -10px, 0) rotate(0deg); }
+}
+
+/* Snow drops trailing from the sleigh. They sit in the sleigh SVG's local
+   coords and animate downward well below the SVG viewBox. A thin blue tint
+   on the stroke keeps them visible even when they pass over white panels. */
+.snowdrop {
+  fill: #ffffff;
+  stroke: rgba(74, 144, 226, 0.55);
+  stroke-width: 0.4;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: snowdropFall 2.8s linear infinite;
+}
+.snowdrop:nth-child(1) { animation-delay: 0s; }
+.snowdrop:nth-child(2) { animation-delay: -0.35s; }
+.snowdrop:nth-child(3) { animation-delay: -0.75s; }
+.snowdrop:nth-child(4) { animation-delay: -1.15s; }
+.snowdrop:nth-child(5) { animation-delay: -1.6s; }
+.snowdrop:nth-child(6) { animation-delay: -2.0s; }
+.snowdrop:nth-child(7) { animation-delay: -2.45s; }
+@keyframes snowdropFall {
+  0%   { transform: translate(0, 0)     scale(0.9); opacity: 0; }
+  10%  { opacity: 0.95; }
+  100% { transform: translate(3px, 260px) scale(0.6); opacity: 0; }
 }
 
 /* Snowfall - three layered repeating gradients drifting down. */
@@ -215,8 +252,26 @@ main {
   border-radius: var(--radius-panel);
   margin: 18px 0;
   box-shadow: var(--shadow-panel);
-  overflow: hidden;
   position: relative;
+}
+
+/* Snowcap draped over the top of each panel. A solid white strip with a row
+   of rounded domes along the bottom — like fresh snow that piled up and
+   sagged into soft bumps at the edge. */
+.panel::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: -1px;
+  right: -1px;
+  height: 22px;
+  background:
+    radial-gradient(circle 6px at 6px 15px, #ffffff 6px, transparent 6.4px) 0 0 / 12px 22px repeat-x,
+    linear-gradient(#ffffff, #ffffff) 0 0 / 100% 15px no-repeat;
+  border-radius: 22px 22px 0 0;
+  filter: drop-shadow(0 2px 3px rgba(7, 18, 38, 0.22));
+  pointer-events: none;
+  z-index: 4;
 }
 
 /* Panel head: a string of baubles hanging from a wire — replaces the
@@ -227,6 +282,7 @@ main {
   background:
     linear-gradient(180deg, #fafafa 0 50%, #f2efe6 50% 100%);
   border-bottom: 1px solid var(--panel-edge);
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -341,9 +397,15 @@ main {
 input {
   width: 100%;
   padding: 13px 14px;
-  background: var(--paper);
+  /* A row of soft snow domes sits on top of the input, then a paper base
+     fills the rest — like fresh snow has dusted the field. */
+  background:
+    radial-gradient(circle 5px at 6px 1px, #ffffff 4.5px, transparent 5px) 0 0 / 14px 6px repeat-x,
+    linear-gradient(180deg, #ffffff 0px, rgba(255,255,255,0) 10px) no-repeat,
+    var(--paper);
   color: var(--ink);
   border: 2px solid #e7e2d4;
+  border-top-color: #ffffff;
   border-radius: var(--radius-input);
   font-size: 16px;
   font-family: inherit;
@@ -354,7 +416,11 @@ input {
 input::placeholder { color: rgba(17, 36, 61, 0.32); }
 input:focus {
   border-color: var(--green);
-  background: #fff;
+  border-top-color: #ffffff;
+  background:
+    radial-gradient(circle 5px at 6px 1px, #ffffff 4.5px, transparent 5px) 0 0 / 14px 6px repeat-x,
+    linear-gradient(180deg, #ffffff 0px, rgba(255,255,255,0) 10px) no-repeat,
+    #ffffff;
   box-shadow: 0 0 0 4px rgba(31, 170, 89, 0.18);
 }
 
